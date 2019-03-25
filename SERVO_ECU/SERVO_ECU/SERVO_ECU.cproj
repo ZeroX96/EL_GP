@@ -118,7 +118,28 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="common.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="hal_PWM.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="hal_PWM.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="hal_PWM_CFG.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="INCLUDES.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="main.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="UART.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="UART.h">
       <SubType>compile</SubType>
     </Compile>
   </ItemGroup>
