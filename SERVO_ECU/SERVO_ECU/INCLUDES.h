@@ -8,17 +8,30 @@
 
 #ifndef INCLUDES_H_
 #define INCLUDES_H_
+
 #ifndef F_CPU
-#define  F_CPU 8000000UL
+#define F_CPU 8000000UL
 #endif
+
+//General includes
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
 #include <stdlib.h>
+
+//RTOS includes
+#include "RTOS/FreeRTOS.h"
+#include "RTOS/FreeRTOSConfig.h"
+#include "RTOS/task.h"
+#include "RTOS/semphr.h"
+
+//self-made Drivers includes
 #include "common.h"
-#include "UART.h"
-#include "hal_PWM.h"
-#include "hal_PWM_CFG.h"
+#include "hal/UART.h"
+#include "hal/PWM/hal_PWM.h"
+#include "hal/PWM/hal_PWM_CFG.h"
+#include "HAL/SPI/hal_SPI.h"
+#include "HAL/SPI/hal_SPI_CFG.h"
 
 
 
