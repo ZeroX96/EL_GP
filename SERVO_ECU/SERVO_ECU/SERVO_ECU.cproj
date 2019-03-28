@@ -122,6 +122,9 @@
     <Compile Include="HAL\common.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="HAL\hal_standarized_data.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="HAL\PWM\hal_PWM.c">
       <SubType>compile</SubType>
     </Compile>
@@ -129,6 +132,9 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="HAL\PWM\hal_PWM_CFG.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="HAL\PWM\pwm_test.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="HAL\SPI\hal_SPI.c">
@@ -143,12 +149,6 @@
     <Compile Include="HAL\SPI\spi_test.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="HAL\UART.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="HAL\UART.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="HAL\UART\hal_USART.c">
       <SubType>compile</SubType>
     </Compile>
@@ -159,6 +159,9 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="HAL\UART\uart_test.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="HAL\UART\uart_unified_data.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="INCLUDES.h">
