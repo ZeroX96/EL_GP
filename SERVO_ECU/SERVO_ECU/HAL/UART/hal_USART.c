@@ -252,15 +252,15 @@ usart_ret_types usart_set_isr_TXC_callback(usart_t * usart_obj,void (*vptr_cb)(v
 	
 	
 }
-
-ISR(USART_RXC_vect)
-{
-	if (vptr_RXC_cb)
-	{
-		vptr_RXC_cb();
-	}
-		
-}
+// 
+// ISR(USART_RXC_vect)
+// {
+// 	if (vptr_RXC_cb)
+// 	{
+// 		vptr_RXC_cb();
+// 	}
+// 		
+// }
 
 ISR(USART_UDRE_vect)
 {

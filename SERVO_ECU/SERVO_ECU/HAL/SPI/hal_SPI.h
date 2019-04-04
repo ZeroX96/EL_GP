@@ -10,7 +10,7 @@
 #define HAL_SPI_H_
 #include <avr/io.h>
 #include "hal_SPI_CFG.h"
-#include "common.h"
+#include "../common.h"
 #include <avr/interrupt.h>
 #include <util/delay.h>
 /*

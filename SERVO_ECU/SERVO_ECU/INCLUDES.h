@@ -26,11 +26,11 @@
 #include "RTOS/semphr.h"
 
 //self-made Drivers includes
-#include "common.h"
+#include "HAL/common.h"
 //uart
 #include "hal/UART/hal_USART.h"
 #include "hal/UART/hal_USART_CFG.h"
-#include "HAL/UART/uart_unified_data.h"
+#include "HAL/hal_standarized_data.h"
 //pwm
 #include "hal/PWM/hal_PWM.h"
 #include "hal/PWM/hal_PWM_CFG.h"
