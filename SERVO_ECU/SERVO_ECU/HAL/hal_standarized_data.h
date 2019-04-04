@@ -36,6 +36,7 @@
 #define STOP_SERVO		'N'
 #define RESUME_SERVO	'O'
 
+
 //SPI//SPI//SPI//SPI//SPI//SPI//SPI
 //SPI//SPI//SPI//SPI//SPI//SPI//SPI
 //SPI//SPI//SPI//SPI//SPI//SPI//SPI
@@ -44,7 +45,6 @@
 
 #define SCANNING_DONE	'Q'
 
-#define 
 
 
 

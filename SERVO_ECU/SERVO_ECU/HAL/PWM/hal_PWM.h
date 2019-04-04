@@ -11,7 +11,7 @@
 
 #include <avr/io.h>
 #include "hal_PWM_CFG.h"
-#include "common.h"
+#include "../common.h"
 #include <util/delay.h>
 #define WGMn1 2
 #define WGMn0 6

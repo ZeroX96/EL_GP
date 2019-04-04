@@ -221,7 +221,6 @@ usart_ret_types usart_set_isr_RXC_callback(usart_t * usart_obj,void (*vptr_cb)(v
 	{
 		ret_val=INVALID_PARAMS;
 	}
-	PORTA=0xff;
 	return ret_val;
 	
 	
@@ -247,12 +246,11 @@ usart_ret_types usart_set_isr_TXC_callback(usart_t * usart_obj,void (*vptr_cb)(v
 	{
 		ret_val=INVALID_PARAMS;
 	}
-	PORTA=0xff;
 	return ret_val;
 	
 	
 }
-
+//TEST LATER THE FUNCTION
 ISR(USART_RXC_vect)
 {
 	if (vptr_RXC_cb)
@@ -261,7 +259,7 @@ ISR(USART_RXC_vect)
 	}
 		
 }
-
+//SINCE THERE IS NO NEED FOR AN INTERRUPT OF A TRANSMISSION COMPLETION SO WILL COMMENT THIS
 ISR(USART_UDRE_vect)
 {
 	if (vptr_TXC_cb)

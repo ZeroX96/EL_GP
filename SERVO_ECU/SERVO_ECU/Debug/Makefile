@@ -32,14 +32,28 @@ LIB_DEP:=
 LINKER_SCRIPT_DEP:=
 
 # Every subdirectory with source files must be described here
-SUBDIRS := 
+SUBDIRS :=  \
+../HAL \
+../HAL/SPI \
+../HAL/UART \
+../HAL/PWM \
+../RTOS
 
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS +=  \
-../hal_PWM.c \
+../HAL/PWM/hal_PWM.c \
+../HAL/SPI/hal_SPI.c \
+../HAL/UART/hal_USART.c \
 ../main.c \
-../UART.c
+../RTOS/croutine.c \
+../RTOS/event_groups.c \
+../RTOS/heap_1.c \
+../RTOS/list.c \
+../RTOS/port.c \
+../RTOS/queue.c \
+../RTOS/tasks.c \
+../RTOS/timers.c
 
 
 PREPROCESSING_SRCS += 
@@ -49,24 +63,60 @@ ASM_SRCS +=
 
 
 OBJS +=  \
-hal_PWM.o \
+HAL/PWM/hal_PWM.o \
+HAL/SPI/hal_SPI.o \
+HAL/UART/hal_USART.o \
 main.o \
-UART.o
+RTOS/croutine.o \
+RTOS/event_groups.o \
+RTOS/heap_1.o \
+RTOS/list.o \
+RTOS/port.o \
+RTOS/queue.o \
+RTOS/tasks.o \
+RTOS/timers.o
 
 OBJS_AS_ARGS +=  \
-hal_PWM.o \
+HAL/PWM/hal_PWM.o \
+HAL/SPI/hal_SPI.o \
+HAL/UART/hal_USART.o \
 main.o \
-UART.o
+RTOS/croutine.o \
+RTOS/event_groups.o \
+RTOS/heap_1.o \
+RTOS/list.o \
+RTOS/port.o \
+RTOS/queue.o \
+RTOS/tasks.o \
+RTOS/timers.o
 
 C_DEPS +=  \
-hal_PWM.d \
+HAL/PWM/hal_PWM.d \
+HAL/SPI/hal_SPI.d \
+HAL/UART/hal_USART.d \
 main.d \
-UART.d
+RTOS/croutine.d \
+RTOS/event_groups.d \
+RTOS/heap_1.d \
+RTOS/list.d \
+RTOS/port.d \
+RTOS/queue.d \
+RTOS/tasks.d \
+RTOS/timers.d
 
 C_DEPS_AS_ARGS +=  \
-hal_PWM.d \
+HAL/PWM/hal_PWM.d \
+HAL/SPI/hal_SPI.d \
+HAL/UART/hal_USART.d \
 main.d \
-UART.d
+RTOS/croutine.d \
+RTOS/event_groups.d \
+RTOS/heap_1.d \
+RTOS/list.d \
+RTOS/port.d \
+RTOS/queue.d \
+RTOS/tasks.d \
+RTOS/timers.d
 
 OUTPUT_FILE_PATH +=SERVO_ECU.elf
 
@@ -89,10 +139,56 @@ LINKER_SCRIPT_DEP+=
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+HAL/PWM/%.o: ../HAL/PWM/%.c
+	@echo Building file: $<
+	@echo Invoking: AVR/GNU C Compiler : 5.4.0
+	$(QUOTE)C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE)  -x c -funsigned-char -funsigned-bitfields -DDEBUG  -I"C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.2.132\include" -I".."  -O1 -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -g2 -Wall -mmcu=atmega32 -B "C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.2.132\gcc\dev\atmega32" -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
+	@echo Finished building: $<
+	
+
+HAL/SPI/%.o: ../HAL/SPI/%.c
+	@echo Building file: $<
+	@echo Invoking: AVR/GNU C Compiler : 5.4.0
+	$(QUOTE)C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE)  -x c -funsigned-char -funsigned-bitfields -DDEBUG  -I"C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.2.132\include" -I".."  -O1 -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -g2 -Wall -mmcu=atmega32 -B "C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.2.132\gcc\dev\atmega32" -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
+	@echo Finished building: $<
+	
+
+HAL/UART/%.o: ../HAL/UART/%.c
+	@echo Building file: $<
+	@echo Invoking: AVR/GNU C Compiler : 5.4.0
+	$(QUOTE)C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE)  -x c -funsigned-char -funsigned-bitfields -DDEBUG  -I"C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.2.132\include" -I".."  -O1 -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -g2 -Wall -mmcu=atmega32 -B "C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.2.132\gcc\dev\atmega32" -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
+	@echo Finished building: $<
+	
+
 ./%.o: .././%.c
 	@echo Building file: $<
 	@echo Invoking: AVR/GNU C Compiler : 5.4.0
-	$(QUOTE)C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE)  -x c -funsigned-char -funsigned-bitfields -DDEBUG  -I"C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.2.132\include"  -O1 -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -g2 -Wall -mmcu=atmega32 -B "C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.2.132\gcc\dev\atmega32" -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
+	$(QUOTE)C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE)  -x c -funsigned-char -funsigned-bitfields -DDEBUG  -I"C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.2.132\include" -I".."  -O1 -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -g2 -Wall -mmcu=atmega32 -B "C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.2.132\gcc\dev\atmega32" -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
+	@echo Finished building: $<
+	
+
+RTOS/%.o: ../RTOS/%.c
+	@echo Building file: $<
+	@echo Invoking: AVR/GNU C Compiler : 5.4.0
+	$(QUOTE)C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE)  -x c -funsigned-char -funsigned-bitfields -DDEBUG  -I"C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.2.132\include" -I".."  -O1 -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -g2 -Wall -mmcu=atmega32 -B "C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.2.132\gcc\dev\atmega32" -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
 	@echo Finished building: $<
 	
 

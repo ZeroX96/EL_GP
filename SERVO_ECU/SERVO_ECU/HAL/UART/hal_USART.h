@@ -9,9 +9,9 @@
 #ifndef HAL_USART_H_
 #define HAL_USART_H_
 
-#include "common.h"
-#include "MSA_AVR-REGS_SUMMARY.h"
+#include "../common.h"
 #include "hal_USART_CFG.h"
+#include <avr/io.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
 
