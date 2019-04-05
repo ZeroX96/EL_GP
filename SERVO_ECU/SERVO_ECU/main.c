@@ -10,7 +10,8 @@
 //defines
 //pwm_defines
 #define SERVO_CTRL_FREQ 50 //20mHZ according to the specs of the servo type we have
-#define SERVO_DELAY_VAL 1000
+#define SERVO_DELAY_VAL 500
+#define PWM_PIN 3
 #define LED_PIN 0
 #define BUZ_PIN 1
 #define RED_LED_ON() (PORTA|=(1<<LED_PIN))
@@ -26,7 +27,7 @@ void uart_check(void);
 //global variables
 volatile msa_u8			SHOWA [16];					// displaying digital output as it's sent as ascii
 volatile msa_u8			uart_data_got=0;			//used to listen to the tiva calls 
-volatile msa_u8			servo_direction[3]={3,6,8};	//
+volatile msa_u8			servo_direction[4]={2,4,6,8};	//
 volatile st_pwm_object			pwm_obj;					//used as a container of the pwm configurations
 volatile str_spi_objectInfo_t	spi_obj;					//used to hold the spi configurations
 volatile usart_t				uart_obj;					//used to hold the uart configurations
@@ -38,11 +39,11 @@ volatile msa_u8 uart_temp=0;
 int main(void)
 {
 	system_init();
-	/*sei();*/
+	sei();
 	while (1)
 	{
-		// 0:1 Servo direction
-		for (msa_u8 iteration_counter=0; iteration_counter < 2; iteration_counter++)
+		// 0:1:2 Servo direction
+		for (msa_u8 iteration_counter=0; iteration_counter < 3; iteration_counter++)
 		{
 			//check if uart_stop
 			uart_check();
@@ -56,13 +57,12 @@ int main(void)
 			//check if uart_stop
 			uart_check();
 			//system test
-			sys_test(iteration_counter,servo_direction[iteration_counter]); 
+			//sys_test(iteration_counter,servo_direction[iteration_counter]); 
 			//wait el confirmation counter to be two 
 			_delay_ms(SERVO_DELAY_VAL);//use the rtos delay instead or wait the confirm cntr to be 2
-			
 		}
-		//2:1 servo direction
-		for (msa_u8 iteration_counter=2; iteration_counter > 0; iteration_counter--)
+		//3:2:1 servo direction
+		for (msa_u8 iteration_counter=3; iteration_counter > 0; iteration_counter--)
 		{
 			//check if uart_stop
 			uart_check();
@@ -76,10 +76,9 @@ int main(void)
 			//check if uart_stop
 			uart_check();
 			//system test
-			sys_test(iteration_counter,servo_direction[iteration_counter]);
+			//sys_test(iteration_counter,servo_direction[iteration_counter]);
 			//wait el confirmation counter to be two
 			_delay_ms(SERVO_DELAY_VAL);//use the rtos delay instead or wait the confirm cntr to be 2
-			
 		}
 		
 	}
@@ -103,15 +102,20 @@ int main(void)
 
 void system_init(void)
 {
-	//pwm init
-	pwm_init(&pwm_obj,TIMER_0,INVERTED,FAST_PWM,SERVO_CTRL_FREQ,1);
+	//LED PINS
+	SET_BIT(DDRA,LED_PIN);
+	SET_BIT(DDRA,BUZ_PIN);
 	//uart init
-	usart_init(&uart_obj,B_SENDER_N_RECEIVER,ONE_STP_BIT,NO_PARITY,EIGHT,INTERRUPT_DRIVEN,FALLING_EDGE);
+	usart_init(&uart_obj,A_RECEIVER,ONE_STP_BIT,NO_PARITY,EIGHT,INTERRUPT_DRIVEN,FALLING_EDGE);
 	usart_set_isr_RXC_callback(&uart_obj,usart_listen);
-	//spi init...try polling i.e wait 10 m s or the time the longest scanning task will take plus some 
+		//spi init...try polling i.e wait 10 m s or the time the longest scanning task will take plus some 
 	//time then ask for the status if reading is done or not
 				//try to make the delay decreases by time :D 
 	hal_spiInit(&spi_obj,SPI_1_base,FREQ_BY_4,MASTER_EN,SPI_POLLING,MODE_1,MSB_FIRST);
+	//pwm init
+	SET_BIT(DDRB,PWM_PIN);
+	SET_BIT(PORTB,PWM_PIN);
+	pwm_init(&pwm_obj,TIMER_0,INVERTED,FAST_PWM,SERVO_CTRL_FREQ,1);
 }
 
 void uart_check(void)	//will be a task with a semaphore depends on the isr
@@ -120,6 +124,7 @@ void uart_check(void)	//will be a task with a semaphore depends on the isr
 	{
 		while (uart_data_got != RESUME_SERVO)	//will be changed by the isr
 		{
+			//uart_data_got=UDR;
 			//red led on
 			RED_LED_ON();
 			//delay 250
@@ -131,6 +136,8 @@ void uart_check(void)	//will be a task with a semaphore depends on the isr
 		}
 	
 	}
+	//red led off
+	RED_LED_OF();
 }
 
 void sys_test(msa_u8 counter,msa_u8 direction)
@@ -152,9 +159,9 @@ void sys_test(msa_u8 counter,msa_u8 direction)
 //these will occur only if there is an emergency call from the tiva controller
 void usart_listen(void)
 {
-	PORTA++;
 	uart_data_got=UDR;
 }
+
 /* fck u ,u already set this using the uart_set_isr :[ 
 
 ISR(USART_RXC_vect)

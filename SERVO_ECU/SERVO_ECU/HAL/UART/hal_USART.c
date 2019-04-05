@@ -43,6 +43,7 @@ usart_ret_types usart_init(	usart_t*  			usart_obj,operations_mode_t	operations_
 						  )
 {
 	usart_ret_types ret_val=NO_USART_ERRORS;
+	#if (DEBUGGING == 1)
 if (		 (usart_obj != NULL)														&& 
 			((operations_mode>=A_SENDER) && (operations_mode<=B_SENDER_N_RECEIVER))		&&
 			((stop_bits_no==ONE_STP_BIT) || (stop_bits_no==TWO_STP_BITS))				&&
@@ -51,6 +52,7 @@ if (		 (usart_obj != NULL)														&&
 			((notifications_mode== INTERRUPT_DRIVEN) || (notifications_mode == POLLING_DRIVEN))
 	)
 	{
+#endif
 		if (notifications_mode == INTERRUPT_DRIVEN)
 		{
 			cli();
@@ -79,29 +81,31 @@ if (		 (usart_obj != NULL)														&&
 		UCSRC=(1<<URSEL)|(stop_bits_no<<USBS)|((data_bits_no & 0x03)<<UCSZ0 )|(parity_mode << UPM0)|(clock_polarity<<UCPOL);
 		(*(volatile msa_u8*)0x29)  =(msa_u8) UBRR_VAL;
 		(*(volatile msa_u8*)0x40)  =(msa_u8) ((UBRR_VAL>>8)&(0x7f));
+#if (DEBUGGING == 1)
 	} 
 	else
 	{
 		ret_val =INVALID_PARAMS;
 	}
-	
+#endif
 	if (notifications_mode == INTERRUPT_DRIVEN)
 	{sei();}//if interrupt driven the global interrupt must be disabled and then enabled at the end of the initiation
-	
 	return ret_val;
 }
 usart_ret_types usart_receive_byte(usart_t * usart_obj,msa_u8* byte)
 {
 	usart_ret_types ret_val=NO_USART_ERRORS;
+#if (DEBUGGING == 1)
 	if ( (usart_obj != NULL) && (byte != NULL) )
 	{
 		if (usart_obj->obj_device_state == INITIATED)
 		{
-	
+#endif
 			while(!((*(volatile msa_u8*)0x2b) & (1<<RXC)))
 			;
 			*byte=(*(volatile msa_u8*)0x2c);
 			(*(volatile msa_u8*)0x2b)|=(1<<RXC);
+#if (DEBUGGING == 1)
 		}
 		else
 		{
@@ -112,22 +116,23 @@ usart_ret_types usart_receive_byte(usart_t * usart_obj,msa_u8* byte)
 	{
 	ret_val=INVALID_PARAMS;
 	}
+#endif
 	return ret_val;
 }
 
 usart_ret_types usart_send_byte(usart_t * usart_obj,msa_u8* byte)
 {
 	usart_ret_types ret_val=NO_USART_ERRORS;
+#if (DEBUGGING == 1)
 	if ( (usart_obj != NULL) && (byte != NULL) )
 	{
 		if (usart_obj->obj_device_state == INITIATED)
 		{
-			
+#endif
 			while ( !( (*(volatile msa_u8*)0x2b) & (1<<UDRE) ) )
 			;
 				(*(volatile msa_u8*)0x2c)=*byte;
-				
-			
+#if (DEBUGGING == 1)	
 		} 
 		else
 		{
@@ -138,6 +143,7 @@ usart_ret_types usart_send_byte(usart_t * usart_obj,msa_u8* byte)
 	{
 		ret_val=INVALID_PARAMS;
 	}
+#endif
 	return ret_val;
 	
 }
@@ -145,10 +151,12 @@ usart_ret_types usart_send_byte(usart_t * usart_obj,msa_u8* byte)
 usart_ret_types usart_send_arr(usart_t* usart_obj,uint8_t *arr_add)
 {
 	usart_ret_types ret_val=NO_USART_ERRORS;
+#if (DEBUGGING == 1)
 	if ( (usart_obj != NULL) && (arr_add != NULL) )
 	{
 		if (usart_obj->obj_device_state == INITIATED)
 		{
+#endif
 			msa_u8 i=0;
 			for (i=0;*(arr_add+i) ;i++)
 			{
@@ -156,6 +164,7 @@ usart_ret_types usart_send_arr(usart_t* usart_obj,uint8_t *arr_add)
 				;
 				(*(volatile msa_u8*)0x2c)=*(arr_add+i);
 			}
+#if (DEBUGGING == 1)
 		}
 		else
 		{
@@ -166,8 +175,7 @@ usart_ret_types usart_send_arr(usart_t* usart_obj,uint8_t *arr_add)
 	{
 		ret_val=INVALID_PARAMS;
 	}
-
-
+#endif
 	return ret_val;
 }
 
@@ -175,11 +183,12 @@ usart_ret_types usart_receive_arr(usart_t * usart_obj,msa_u8* arr_add,msa_u8 arr
 {
 	usart_ret_types ret_val=NO_USART_ERRORS;
 	msa_u8 data_in_cntr=0,temp=0;
-	
+#if (DEBUGGING == 1)	
 	if ( (usart_obj != NULL) && (arr_add != NULL) )
 	{
 		if (usart_obj->obj_device_state == INITIATED)
 		{
+#endif
 			while( (temp != 13) && (data_in_cntr < (arr_size) ) )
 			{
 				usart_receive_byte(usart_obj,&temp);
@@ -188,6 +197,7 @@ usart_ret_types usart_receive_arr(usart_t * usart_obj,msa_u8* arr_add,msa_u8 arr
 				break;
 			}
 			arr_add[data_in_cntr]=0;
+#if (DEBUGGING == 1)
 		}
 		else
 		{
@@ -198,6 +208,7 @@ usart_ret_types usart_receive_arr(usart_t * usart_obj,msa_u8* arr_add,msa_u8 arr
 	{
 		ret_val=INVALID_PARAMS;
 	}
+#endif
 	return ret_val;
 }
 
@@ -205,12 +216,14 @@ usart_ret_types usart_receive_arr(usart_t * usart_obj,msa_u8* arr_add,msa_u8 arr
 usart_ret_types usart_set_isr_RXC_callback(usart_t * usart_obj,void (*vptr_cb)(void))
 {
 	usart_ret_types ret_val=NO_USART_ERRORS;
+#if (DEBUGGING == 1)
 	if ( (usart_obj != NULL) && (vptr_cb != NULL) )
 	{
 		if (usart_obj->obj_device_state == INITIATED)
 		{
+#endif
 			vptr_RXC_cb=vptr_cb;
-			
+#if (DEBUGGING == 1)			
 		}
 		else
 		{
@@ -221,21 +234,22 @@ usart_ret_types usart_set_isr_RXC_callback(usart_t * usart_obj,void (*vptr_cb)(v
 	{
 		ret_val=INVALID_PARAMS;
 	}
+#endif
 	return ret_val;
-	
-	
 }
 
 
 usart_ret_types usart_set_isr_TXC_callback(usart_t * usart_obj,void (*vptr_cb)(void))
 {
 	usart_ret_types ret_val=NO_USART_ERRORS;
+#if (DEBUGGING == 1)
 	if ( (usart_obj != NULL) && (vptr_cb != NULL) )
 	{
 		if (usart_obj->obj_device_state == INITIATED)
 		{
+#endif
 			vptr_TXC_cb=vptr_cb;
-
+#if (DEBUGGING == 1)
 		}
 		else
 		{
@@ -246,6 +260,7 @@ usart_ret_types usart_set_isr_TXC_callback(usart_t * usart_obj,void (*vptr_cb)(v
 	{
 		ret_val=INVALID_PARAMS;
 	}
+#endif
 	return ret_val;
 	
 	
@@ -259,11 +274,11 @@ ISR(USART_RXC_vect)
 	}
 		
 }
-//SINCE THERE IS NO NEED FOR AN INTERRUPT OF A TRANSMISSION COMPLETION SO WILL COMMENT THIS
-ISR(USART_UDRE_vect)
-{
-	if (vptr_TXC_cb)
-	{
-		vptr_TXC_cb();
-	}	
-}
+// SINCE THERE IS NO NEED FOR AN INTERRUPT OF A TRANSMISSION COMPLETION SO WILL COMMENT THIS
+// ISR(USART_UDRE_vect)
+// {
+// 	if (vptr_TXC_cb)
+// 	{
+// 		vptr_TXC_cb();
+// 	}	
+// }

@@ -13,11 +13,13 @@
 pwm_error_t pwm_init(st_pwm_object *pwm_obj,timer_bases_t pwm_base,pwm_output_mode_t pwm_mode,pwm_operating_mode_t pwm_op_mode,msa_u32 pwm_freq,pwm_duty_cycle_t pwm_duty_cycle)
 {
 	pwm_error_t ret_val=NO_PWM_ERRORS;
+#if (DEBUGGING == 1)
 	if ( ( (pwm_base==TIMER_0)||(pwm_base==TIMER_1)||(pwm_base==TIMER_2) ) && (pwm_freq != 0) && (pwm_obj != NULL)&&
 		 ( (pwm_mode==INVERTED)||(pwm_mode==NON_INVERTED) ) && ( (pwm_op_mode == FAST_PWM) || (pwm_op_mode == PCORRECT_PWM) )&&
 		 ( (pwm_duty_cycle >= 0) || (pwm_duty_cycle <= 100) )
        )
 	{
+#endif
 		//store data in the reference object
 		pwm_obj->pwm_base_obj=pwm_base;
 		pwm_obj->pwm_duty_cycle_obj=pwm_duty_cycle;
@@ -80,12 +82,14 @@ pwm_error_t pwm_init(st_pwm_object *pwm_obj,timer_bases_t pwm_base,pwm_output_mo
 		{
 			OCR2=OcrRegVal;
 		}
+#if (DEBUGGING == 1)
 		
 	} 
 	else
 	{
 		ret_val=INVALID_PWM_PARAMS;
 	}
+#endif
 	return ret_val;
 }
 
@@ -93,6 +97,7 @@ pwm_error_t pwm_init(st_pwm_object *pwm_obj,timer_bases_t pwm_base,pwm_output_mo
 pwm_error_t pwm_edit(st_pwm_object*pwm_obj,pwm_output_mode_t pwm_mode,pwm_operating_mode_t pwm_op_mode,msa_u32 pwm_freq,pwm_duty_cycle_t pwm_duty_cycle)
 {
 	pwm_error_t ret_val=NO_PWM_ERRORS;
+#if (DEBUGGING == 1)
 	if ( (pwm_freq != 0) && (pwm_obj != NULL)&&
 	( (pwm_mode==INVERTED)||(pwm_mode==NON_INVERTED) ) && ( (pwm_op_mode == FAST_PWM) || (pwm_op_mode == PCORRECT_PWM) )&&
 	( (pwm_duty_cycle >= 0) || (pwm_duty_cycle <= 100) )
@@ -100,8 +105,9 @@ pwm_error_t pwm_edit(st_pwm_object*pwm_obj,pwm_output_mode_t pwm_mode,pwm_operat
 	{
 		if (pwm_obj->pwm_module_config_state_obj == CONFIGED)
 		{
+#endif
 			ret_val=pwm_init(pwm_obj,pwm_obj->pwm_base_obj,pwm_mode,pwm_op_mode,pwm_freq,pwm_duty_cycle);
-			
+#if (DEBUGGING == 1)
 		} 
 		else //not gonfiged :{ 
 		{
@@ -112,14 +118,17 @@ pwm_error_t pwm_edit(st_pwm_object*pwm_obj,pwm_output_mode_t pwm_mode,pwm_operat
 	{
 		ret_val=INVALID_PWM_PARAMS;
 	}
+#endif
 	return ret_val;
 }
 
 pwm_error_t pwm_stop(st_pwm_object *pwm_obj)
 {
 	pwm_error_t ret_val=NO_PWM_ERRORS;
+#if (DEBUGGING == 1)
 	if (pwm_obj != NULL)
 	{
+#endif
 		*(volatile msa_u8*)(pwm_obj->pwm_base_obj)=0;
 		
 		if (pwm_obj->pwm_base_obj == TIMER_0)
@@ -141,11 +150,13 @@ pwm_error_t pwm_stop(st_pwm_object *pwm_obj)
 			TCNT2=0;
 			OFF_PWM_SRC(OCN2_PORT,OCN2_POS);
 		}
+#if (DEBUGGING == 1)
 	}
 	else
 	{
 		ret_val=INVALID_PWM_PARAMS;
 	}
+#endif
 	return ret_val;
 }
 
@@ -153,13 +164,16 @@ pwm_error_t pwm_stop(st_pwm_object *pwm_obj)
 pwm_error_t pwm_run(st_pwm_object *pwm_obj)
 {
 	pwm_error_t ret_val=NO_PWM_ERRORS;
+#if (DEBUGGING == 1)
 	if (pwm_obj != NULL)
 	{
 		if (pwm_obj->pwm_module_config_state_obj == CONFIGED)
 		{
+#endif
 			//was going to store the registers in the stop func and restore them here but it would need more effort and i'm busy so, "???? ?????"
 			//so if had time in the future,edit the stop and run functions
 			pwm_init(pwm_obj,pwm_obj->pwm_base_obj,pwm_obj->pwm_mode_obj,pwm_obj->pwm_op_mode_obj,pwm_obj->pwm_freq_obj,pwm_obj->pwm_duty_cycle_obj);
+#if (DEBUGGING == 1)
 		} 
 		else
 		{
@@ -170,6 +184,7 @@ pwm_error_t pwm_run(st_pwm_object *pwm_obj)
 	{
 		ret_val=INVALID_PWM_PARAMS;
 	}
+#endif
 	return ret_val;
 }
 
@@ -177,10 +192,12 @@ pwm_error_t pwm_run(st_pwm_object *pwm_obj)
 pwm_error_t pwm_deinit(st_pwm_object *pwm_obj)
 {
 	pwm_error_t ret_val=NO_PWM_ERRORS;
+#if (DEBUGGING == 1)
 	if (pwm_obj != NULL)
 	{
 		if (pwm_obj->pwm_module_config_state_obj == CONFIGED)
 		{
+#endif
 			*(volatile msa_u8*)(pwm_obj->pwm_base_obj)=0x00;
 			//store data in the reference object
 			pwm_obj->pwm_base_obj=0;
@@ -208,7 +225,8 @@ pwm_error_t pwm_deinit(st_pwm_object *pwm_obj)
 				OCR2=0;
 				TCNT2=0;
 				OFF_PWM_SRC(OCN2_PORT,OCN2_POS);
-			}
+		}
+#if (DEBUGGING == 1)
 		}
 		else
 		{
@@ -219,5 +237,6 @@ pwm_error_t pwm_deinit(st_pwm_object *pwm_obj)
 	{
 		ret_val=INVALID_PWM_PARAMS;
 	}
+#endif
 	return ret_val;
 }

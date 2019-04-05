@@ -39,7 +39,7 @@
      <ITEM name="VSplitter1Pos">238</ITEM>
     </PROPERTIES>
    </POPUP>
-   <POPUP w="464" x="888" flags="00008023" y="113" h="250" pid="0" iid="4">
+   <POPUP w="1210" x="145" flags="00008023" y="422" h="250" pid="0" iid="4">
     <PROPERTIES>
      <ITEM name="AutoEcho">1</ITEM>
      <ITEM name="HexMode">0</ITEM>
@@ -107,6 +107,9 @@
      <ITEM name="ShowToolTips">Yes</ITEM>
      <ITEM name="TopLineAddress">00000020</ITEM>
     </PROPERTIES>
+   </POPUP>
+   <POPUP w="695" x="671" flags="00000001" y="3" h="453" pid="0" iid="7">
+    <PROPERTIES/>
    </POPUP>
   </PWI>
  </MODULE>
