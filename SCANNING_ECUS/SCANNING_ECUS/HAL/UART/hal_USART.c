@@ -65,8 +65,10 @@ if (		 (usart_obj != NULL)														&&
 				(*(volatile msa_u8*)0x2a) |=(1<<RXCIE);
 			}
 			else
-			{
-				(*(volatile msa_u8*)0x2a) |=(1<<RXCIE)|(1<<UDRIE);	
+			{		
+				(*(volatile msa_u8*)0x2a) |=(1<<RXCIE);//|(1<<UDRIE);	//disabled the sending completion isr
+																		//since the completion isr causes errors,
+																		//system halt and not needed in fact.
 			}
 		}
 		//storing config data

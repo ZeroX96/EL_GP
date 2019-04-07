@@ -26,7 +26,6 @@ extern usart_t uart_obj;					//used to hold the uart configurations
 msa_u32 read_ultra_sonic0(void) //0000 0011
 {
 	ready_0=E_FALSE;
-	
 	CLEAR_BIT(PORTC,0);	
 	_delay_us(2);
 	SET_BIT(PORTC,0);	

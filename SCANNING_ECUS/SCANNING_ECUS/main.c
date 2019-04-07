@@ -22,9 +22,27 @@ volatile msa_u32 usonic0;
 volatile msa_u32 usonic1;
 int main(void)
 {
+	usonic0=read_ultra_sonic0();
+	send_usonic0(usonic0);	//NOTE U R SENDING THE ASCII CODE,VALUES
+	usonic1=read_ultra_sonic1();
+	send_usonic1(usonic1);
 	system_init();
+	//test ignoring the values lower than 380 and higher than 1000 4ex so i'm more precised and in safe region
     while (1) 
     {
+		if ( ( (usonic1 <= 450) && (usonic1 > 0) ) || ( (usonic0 <= 450) && (usonic0 > 0) )  )
+		{
+			usonic0=read_ultra_sonic0();
+			usonic1=read_ultra_sonic1();
+			send_usonic0(usonic0);
+			send_usonic1(usonic1);
+			PORTA=0xff;
+		}
+		else
+		{
+			PORTA=0x00;
+		}
+		_delay_ms(1000);
     }
 }
 
@@ -35,15 +53,15 @@ void system_init(void)
 	//time then ask for the status if reading is done or not
 	//try to make the delay decreases by time :D
 	hal_spiInit(&spi_obj,SPI_1_base,FREQ_BY_4,SLAVE_EN,SPI_POLLING,MODE_1,MSB_FIRST);
-	//uart init
-	usart_init(&uart_obj,A_RECEIVER,ONE_STP_BIT,NO_PARITY,EIGHT,INTERRUPT_DRIVEN,FALLING_EDGE);
+	//uart init //but will disable the completion isr
+	usart_init(&uart_obj,B_SENDER_N_RECEIVER,ONE_STP_BIT,NO_PARITY,EIGHT,INTERRUPT_DRIVEN,FALLING_EDGE);	
 	usart_set_isr_RXC_callback(&uart_obj,usart_listen);
 	//usonics_init
 	//output the control/triggering pins
 	SET_BIT(DDRC,0);
 	SET_BIT(DDRC,1);
 	//ultrasonic
-	//setting the interrupt pins as an input
+	//setting the interrupt pins as inputs
 	CLEAR_BIT(DDRD,2);
 	CLEAR_BIT(DDRD,3);
 	//enabling interrupt0 & interrupt1
@@ -55,6 +73,7 @@ void system_init(void)
 	//enable the over flow interrupts for timer 2 & time
 	SET_BIT(TIMSK,TOIE2);
 	SET_BIT(TIMSK,TOIE0);
+	sei();
 	_delay_ms(20);
 }
 
