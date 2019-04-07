@@ -4,6 +4,12 @@
 
 HAL\EXTERNAL_INTERRUPTS\external_interrupts.c
 
+HAL\SPI\hal_SPI.c
+
+HAL\UART\hal_USART.c
+
+HAL\USONIC\USONICs.c
+
 main.c
 
 RTOS\croutine.c

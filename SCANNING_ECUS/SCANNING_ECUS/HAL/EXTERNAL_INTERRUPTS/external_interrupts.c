@@ -101,12 +101,8 @@ INT_ERRORS set_interrupt(INT_NAMES int_name,INT_MODES int_mode)
 				else
 				{
 					ret_val=INVALID_MODE_FOR_INT2;
-				}
-				
+				}	
 			}
-
-			
-
 		} 
 		else
 		{
