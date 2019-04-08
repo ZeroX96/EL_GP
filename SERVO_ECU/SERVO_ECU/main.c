@@ -16,7 +16,7 @@ volatile st_pwm_object			pwm_obj;					//used as a container of the pwm configura
 volatile str_spi_objectInfo_t	spi_obj;					//used to hold the spi configurations
 volatile usart_t				uart_obj;					//used to hold the uart configurations
 
-volatile msa_u8 spi_temp_out=0;
+volatile msa_u8 spi_temp_out=SCAN_YA_MEGA;
 volatile msa_u8 spi_temp_inn=0;
 volatile msa_u8 uart_temp=0;
 
@@ -36,7 +36,6 @@ int main(void)
 			//check if uart_stop
 			uart_check();
 			//spi_scan ya atmega
-			spi_temp_out = SCAN_YA_MEGA;
 			hal_spiExchangeDATA(&spi_obj,&spi_temp_out,&spi_temp_inn);
 			//check if uart_stop
 			uart_check();
@@ -55,7 +54,6 @@ int main(void)
 			//check if uart_stop
 			uart_check();
 			//spi_scan ya atmega
-			spi_temp_out = SCAN_YA_MEGA;
 			hal_spiExchangeDATA(&spi_obj,&spi_temp_out,&spi_temp_inn);
 			//check if uart_stop
 			uart_check();
