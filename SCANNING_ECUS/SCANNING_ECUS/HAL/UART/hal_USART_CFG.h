@@ -8,7 +8,7 @@
 
 #ifndef HAL_USART_CFG_H_
 #define HAL_USART_CFG_H_
-
+#define DEBUGGING 0
 //change these settings as needed.if not changed,these are Z{//default settings-------|
 //																					  |
 //the operating mode																  |

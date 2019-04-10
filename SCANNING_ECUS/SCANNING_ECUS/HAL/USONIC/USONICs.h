@@ -18,7 +18,7 @@
 #include "../common.h"
 #include "HAL/UART/hal_USART.h"
 
-
+//revise this val!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #define OVF_VAL 1500 //the val. of every overflow occurrence
 
 //static uint8_t overFlow_cntr=0;//enable the ov isr and just inc this global every ov isr and reset it whenever the counter val is read

@@ -66,7 +66,6 @@ msa_u32 read_ultra_sonic1(void) //0000 0011
 	ready_1=E_FALSE;	//false it so th next time wait for the next reading process
 	_delay_us(50);
 	return ( ( pulse1 + ((msa_u32)OVF_VAL*OVF_CNTR_1))/(58) );	//getting the distance based on formula on introduction   * ((msa_u32)F_CPU/1000000)
-	
 }
 void send_usonic1(msa_u32 COUNTB)
 {

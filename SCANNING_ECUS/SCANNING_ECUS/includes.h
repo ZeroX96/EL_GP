@@ -34,10 +34,13 @@
 //spi
 #include "HAL/SPI/hal_SPI.h"
 #include "HAL/SPI/hal_SPI_CFG.h"
-//
+//usonics
+#include "HAL/USONIC/USONICs.h"
+
 void system_init(void);
 void sys_test(msa_u8 counter,msa_u8 direction);
 void usart_listen(void);
 void uart_check(void);
+void spi_listen(void);
 
 #endif /* INCLUDES_H_ */

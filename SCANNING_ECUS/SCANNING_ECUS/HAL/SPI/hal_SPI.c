@@ -206,11 +206,10 @@ spi_error_t hal_setSpiIsrCallback(str_spi_objectInfo_t * strg_obj,void (*vptr_cb
 	
 }
 
-//SINCE I'LL USE IT AS POLLING,WILL COMENT THIS NOT TO AFFECT THE SYSTEM
-// ISR(SPI_STC_vect)
-// {
-// 	if (spi_interrupt_handler)
-// 	{
-// 		(void)(*spi_interrupt_handler)();
-// 	}
-// }
+ISR(SPI_STC_vect)
+{
+	if (spi_interrupt_handler)
+	{
+		(void)(*spi_interrupt_handler)();
+	}
+}
