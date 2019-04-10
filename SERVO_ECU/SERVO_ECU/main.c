@@ -19,7 +19,7 @@ volatile usart_t				uart_obj;					//used to hold the uart configurations
 volatile msa_u8 spi_temp_out=SCAN_YA_MEGA;
 volatile msa_u8 spi_temp_inn=0;
 volatile msa_u8 uart_temp=0;
-
+ 
 int main(void)
 {
 	system_init();

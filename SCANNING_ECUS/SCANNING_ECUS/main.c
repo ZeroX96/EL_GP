@@ -72,7 +72,7 @@ void system_init(void)
 	//uart init //but will disable the completion isr
 	usart_init(&uart_obj,B_SENDER_N_RECEIVER,ONE_STP_BIT,NO_PARITY,EIGHT,POLLING_DRIVEN,FALLING_EDGE);	//notice that in this specific project
 																											//according to sys demands, i ignored
-																											//prevented the uart_send_complete isr
+																											//prevented the uart_send_complete isr 
 	usart_set_isr_RXC_callback(&uart_obj,usart_listen);
 	//usonics_init
 	//output the control/triggering pins
