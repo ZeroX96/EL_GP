@@ -12,6 +12,7 @@ static volatile bool_t state0 = 0;			// integer  to access all though the progra
 static volatile unsigned int OVF_CNTR_0 = 0;     // integer  to take care of the over-flows of u_sonic_1
 static volatile unsigned char SHOWA [16];		// displaying digital output as it's sent as ascii
 static volatile bool_t ready_0=E_FALSE;		//used to synchronize & ensure that the sensor reading process is completed
+static volatile unsigned int chker_0=0;		//an extra stucking protection flag
 
 //  the ultrasonic1 using counter 2
 static volatile unsigned int pulse1 = 0;			// integer  to cal the time of the signal transmission and reception
@@ -19,9 +20,11 @@ static volatile bool_t state1 = 0;			// integer  to access all though the progra
 static volatile unsigned int OVF_CNTR_1 = 0;     // integer  to take care of the over-flows of u_sonic_1
 static volatile unsigned char SHOWB [16];		// displaying digital output as it's sent as ascii
 static volatile bool_t ready_1=E_FALSE;		//used to synchronize & ensure that the sensor reading process is completed
+static volatile unsigned int chker_1=0;		//an extra stucking protection flag
 
 //extending the visibility of the uart object that holds the uart configs
 extern usart_t uart_obj;					//used to hold the uart configurations
+
 //  the ultrasonic0 using counter 1
 msa_u32 read_ultra_sonic0(void) //0000 0011
 {
@@ -32,8 +35,12 @@ msa_u32 read_ultra_sonic0(void) //0000 0011
 	_delay_us(15);		//triggering the sensor for 15usec
 	CLEAR_BIT(PORTC,0);
 	
-	while (!ready_0)//wait the sensor reading completion
-	;
+	while ( (!ready_0) && (chker_0 > 500) )//wait the sensor reading completion
+	{
+		_delay_us(2);
+		chker_0++;
+	}
+	chker_0=0;
 	ready_0=E_FALSE;	//false it so the next time wait for the next reading process
 	_delay_us(50);
 	return ( ( pulse0 + ((msa_u32)OVF_VAL*OVF_CNTR_0))/(58) );	//getting the distance based on formula on introduction
@@ -61,12 +68,17 @@ msa_u32 read_ultra_sonic1(void) //0000 0011
 	_delay_us(15);		//triggering the sensor for 15usec
 	CLEAR_BIT(PORTC,1);
 	
-	while (!ready_1)//wait the sensor reading completion
-	;
+	while ( (!ready_1) && (chker_1 > 500) )//wait the sensor reading completion
+	{
+		_delay_us(2);
+		chker_1++;
+	}
+	chker_1=0;
 	ready_1=E_FALSE;	//false it so th next time wait for the next reading process
-	_delay_us(50);
+	_delay_us(10);
 	return ( ( pulse1 + ((msa_u32)OVF_VAL*OVF_CNTR_1))/(58) );	//getting the distance based on formula on introduction   * ((msa_u32)F_CPU/1000000)
 }
+
 void send_usonic1(msa_u32 COUNTB)
 {
 	msa_u8 *arr_add1=(msa_u8 *)"usonic1 data = ";

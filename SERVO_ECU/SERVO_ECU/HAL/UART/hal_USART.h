@@ -23,7 +23,7 @@
 typedef enum  //usart_errors
 {
 	NO_USART_ERRORS=(USART_ERRORS_BASE+1),
-	INVALID_PARAMS=(USART_ERRORS_BASE+2),
+	INVALID_UART_PARAMS=(USART_ERRORS_BASE+2),
 	DEVICE_NOT_INITIATED=(USART_ERRORS_BASE+3),
 	DEVICE_ALREADY_DEINITIATED=(USART_ERRORS_BASE+6),
 }usart_ret_types;
@@ -71,8 +71,8 @@ typedef enum
 
 typedef enum
 {
-	Rising_EDGE,
-	FALLING_EDGE,
+	UART_Rising_EDGE,
+	UART_FALLING_EDGE,
 }clock_polarity_t;
 typedef struct  
 {

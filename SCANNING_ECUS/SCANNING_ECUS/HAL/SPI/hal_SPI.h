@@ -99,6 +99,7 @@ spi_error_t hal_spiInit( str_spi_objectInfo_t *strg_obj,spi_driver_base_t driver
 						 spi_data_order_t data_order
 					   );
 spi_error_t hal_spiExchangeDATA(str_spi_objectInfo_t * strg_obj,msa_u8 *ByteOUT,msa_u8 *ByteIN);
+spi_error_t hal_spiExchangeDATA_edited(str_spi_objectInfo_t * strg_obj,msa_u8 *ByteOUT,msa_u8 *ByteIN);
 spi_error_t hal_spiExchangeDataPacket(str_spi_objectInfo_t * strg_obj,msa_u8 *PacketOUT,msa_u8 *PacketIN,msa_u8 PacketSize);
 spi_error_t hal_spiDeinit(str_spi_objectInfo_t *strg_obj);
 spi_error_t hal_setSpiIsrCallback(str_spi_objectInfo_t * strg_obj,void (*vptr_cb)(void));

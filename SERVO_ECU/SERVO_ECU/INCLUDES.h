@@ -37,13 +37,14 @@
 //spi
 #include "HAL/SPI/hal_SPI.h"
 #include "HAL/SPI/hal_SPI_CFG.h"
-
+//interrupts
+#include "HAL/INTERRUPTS/external_interrupts.h"
 
 
 //defines
 //pwm_defines
 #define SERVO_CTRL_FREQ 50 //20mHZ according to the specs of the servo type we have
-#define SERVO_DELAY_VAL 500
+#define SERVO_DELAY_VAL 300
 #define PWM_PIN 3
 #define LED_PIN 0
 #define BUZ_PIN 1
@@ -51,11 +52,6 @@
 #define RED_LED_OF() (PORTA&=~(1<<LED_PIN))
 #define BUZ_ON() (PORTA|=(1<<BUZ_PIN))
 #define BUZ_OF() (PORTA&=~(1<<BUZ_PIN))
-//
-void system_init(void);
-void sys_test(msa_u8 counter,msa_u8 direction);
-void usart_listen(void);
-void uart_check(void);
 
 
 #endif /* INCLUDES_H_ */

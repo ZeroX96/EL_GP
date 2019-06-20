@@ -85,7 +85,7 @@ if (		 (usart_obj != NULL)														&&
 	} 
 	else
 	{
-		ret_val =INVALID_PARAMS;
+		ret_val =INVALID_UART_PARAMS;
 	}
 #endif
 	if (notifications_mode == INTERRUPT_DRIVEN)
@@ -114,7 +114,7 @@ usart_ret_types usart_receive_byte(usart_t * usart_obj,msa_u8* byte)
 	}
 	else
 	{
-	ret_val=INVALID_PARAMS;
+	ret_val=INVALID_UART_PARAMS;
 	}
 #endif
 	return ret_val;
@@ -141,7 +141,7 @@ usart_ret_types usart_send_byte(usart_t * usart_obj,msa_u8* byte)
 	} 
 	else
 	{
-		ret_val=INVALID_PARAMS;
+		ret_val=INVALID_UART_PARAMS;
 	}
 #endif
 	return ret_val;
@@ -157,8 +157,8 @@ usart_ret_types usart_send_arr(usart_t* usart_obj,uint8_t *arr_add)
 		if (usart_obj->obj_device_state == INITIATED)
 		{
 #endif
-			msa_u8 i=0;
-			for (i=0;*(arr_add+i) ;i++)
+			volatile msa_u8 i=0;
+			for (i=0;*(arr_add+i) != '\0';i++)
 			{
 				while ( !( (*(volatile msa_u8*)0x2b) & (1<<UDRE) ) )
 				;
@@ -173,7 +173,7 @@ usart_ret_types usart_send_arr(usart_t* usart_obj,uint8_t *arr_add)
 	}
 	else
 	{
-		ret_val=INVALID_PARAMS;
+		ret_val=INVALID_UART_PARAMS;
 	}
 #endif
 	return ret_val;
@@ -206,7 +206,7 @@ usart_ret_types usart_receive_arr(usart_t * usart_obj,msa_u8* arr_add,msa_u8 arr
 	}
 	else
 	{
-		ret_val=INVALID_PARAMS;
+		ret_val=INVALID_UART_PARAMS;
 	}
 #endif
 	return ret_val;
@@ -232,7 +232,7 @@ usart_ret_types usart_set_isr_RXC_callback(usart_t * usart_obj,void (*vptr_cb)(v
 	}
 	else
 	{
-		ret_val=INVALID_PARAMS;
+		ret_val=INVALID_UART_PARAMS;
 	}
 #endif
 	return ret_val;
@@ -258,7 +258,7 @@ usart_ret_types usart_set_isr_TXC_callback(usart_t * usart_obj,void (*vptr_cb)(v
 	}
 	else
 	{
-		ret_val=INVALID_PARAMS;
+		ret_val=INVALID_UART_PARAMS;
 	}
 #endif
 	return ret_val;

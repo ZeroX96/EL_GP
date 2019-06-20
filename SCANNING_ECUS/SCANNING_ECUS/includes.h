@@ -13,6 +13,8 @@
 #define F_CPU 8000000UL
 #endif
 
+#define DEBUGGING 0
+
 //General includes
 #include <avr/io.h>
 #include <avr/interrupt.h>
@@ -37,6 +39,20 @@
 //usonics
 #include "HAL/USONIC/USONICs.h"
 
+
+
+//defines
+//pwm_defines
+#define SERVO_CTRL_FREQ 50 //20mHZ according to the specs of the servo type we have
+#define SERVO_DELAY_VAL 500
+#define PWM_PIN 3
+#define LED_PIN 0
+#define BUZ_PIN 1
+#define RED_LED_ON() (PORTA|=(1<<LED_PIN))
+#define RED_LED_OF() (PORTA&=~(1<<LED_PIN))
+#define BUZ_ON() (PORTA|=(1<<BUZ_PIN))
+#define BUZ_OF() (PORTA&=~(1<<BUZ_PIN))
+//
 void system_init(void);
 void sys_test(msa_u8 counter,msa_u8 direction);
 void usart_listen(void);

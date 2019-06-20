@@ -14,14 +14,14 @@ volatile msa_u8			uart_data_got=0;			//used to listen to the tiva calls
 volatile str_spi_objectInfo_t	spi_obj;					//used to hold the spi configurations
 volatile usart_t				uart_obj;					//used to hold the uart configurations
 
+volatile static msa_u32 usonic0=0;
+volatile static msa_u32 usonic1=0;
 volatile msa_u8 spi_temp_out=0;
 volatile msa_u8 spi_temp_inn=0;
-volatile msa_u8 uart_temp='\r';
-volatile msa_u8 scaneduler=E_TRUE;			//used to synchronize the scanning with the servo spi calls
+volatile msa_u8 uart_temp='\n';
+//volatile msa_u8 scaneduler=E_TRUE;			//used to synchronize the scanning with the servo spi calls
 
 
-volatile static msa_u32 usonic0;
-volatile static msa_u32 usonic1;
 
 
 int main(void)
@@ -31,39 +31,45 @@ int main(void)
     {
 		usonic0=read_ultra_sonic0();
 		usonic1=read_ultra_sonic1();
+		//scaneduler=E_FALSE;
+		//test ignoring the values lower than 380 and higher than 1000 4ex so I'm more precise and in safe region
 		send_usonic0(usonic0);
 		send_usonic1(usonic1);
-		scaneduler=E_FALSE;
-		//test ignoring the values lower than 380 and higher than 1000 4ex so I'm more precise and in safe region
-		if (( (usonic0 <= 450) && (usonic0 > 0) ) || ( (usonic1 <= 450) && (usonic1 > 0) ) )
+		if (( (usonic0 <= 750U) && (usonic0 >= 1U) ) || ( (usonic1 <= 750U) && (usonic1 >=1U) ) )
 		{
-			usonic0=read_ultra_sonic0();
-			usonic1=read_ultra_sonic1();
-			send_usonic0(usonic0);
-			send_usonic1(usonic1);
-			PORTA++;
+			if (( (usonic0 <= 750U) && (usonic0 >= 1U) ))
+			{
+				spi_temp_out=OBSTACLE_A1;
+			} 
+			else //usonic1
+			{
+				spi_temp_out=OBSTACLE_A2;
+			}
+			hal_spiExchangeDATA_edited(&spi_obj,&spi_temp_out,&spi_temp_inn);
 		}
-		else
-		{
-			PORTA++;
-		}
-		usart_send_byte(&uart_obj,&uart_temp);
-		while(scaneduler != E_TRUE)
-		{
-			PORTC^=0xff;
-			_delay_ms(250);
-			
-		}
-		PORTC=0x00;
- 		PORTC = spi_temp_inn;
- 		PORTA = spi_temp_out;
-		//_delay_ms(250);
+ 		_delay_ms(2);
     }
+//if any error happened and missed the previous loop this will cover that error and try to catch
+//and i'll know by the change in the system behavior
+	while(1)
+	{
+		//system fail alarm
+		//BUZ on
+		BUZ_ON();
+		//delay 250
+		_delay_ms(500);
+		//BUZ off
+		BUZ_OF();
+		//delay 250
+		_delay_ms(500);
+	}
+	return 0;
 }
 
 void system_init(void)
 {
 	DDRC=DDRA=0xff;
+	SET_BIT(PORTA,0);
 	//spi init...try polling i.e wait 10 m s or the time the longest scanning task will take plus some
 	//time then ask for the status if reading is done or not
 	//try to make the delay decreases by time :D
@@ -104,9 +110,17 @@ void usart_listen(void)
 //this will occur only if there is an emergency call from the tiva controller
 void spi_listen(void)
 {
-	scaneduler=E_TRUE;
-	PORTA=SPDR;
+	//wait for safety
+	//scan 1
+	//wait 
+	//scan 2
+	//wait
+	//scan 3
+	
+	//scaneduler=E_TRUE;
+	//PORTA=SPDR;
 	spi_temp_inn=SPDR;
-	SPDR=spi_temp_out;
+	//SPDR=spi_temp_out;
+	
 	//mutexGiveFromISR
 }

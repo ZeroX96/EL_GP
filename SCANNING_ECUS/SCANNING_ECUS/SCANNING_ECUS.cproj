@@ -180,7 +180,13 @@
     <Compile Include="includes.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="main tested without RTOS.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="main.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="major_changes_ahead.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="RTOS\croutine.c">

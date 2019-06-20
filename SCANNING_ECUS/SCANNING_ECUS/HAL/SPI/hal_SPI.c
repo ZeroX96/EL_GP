@@ -91,6 +91,51 @@ spi_error_t hal_spiInit(str_spi_objectInfo_t *strg_obj,spi_driver_base_t driver_
 	return ret_val;
 }
 
+spi_error_t hal_spiExchangeDATA_edited(str_spi_objectInfo_t * strg_obj,msa_u8 *ByteOUT,msa_u8 *ByteIN)
+{
+	spi_error_t ret_val=NO_SPI_ERROR;
+	#if (DEBUGGING == 1)
+	if ( (strg_obj != NULL) && (ByteOUT != NULL) && (ByteIN != NULL) )
+	{
+		if (strg_obj->driver_state_obj == DRIVER_INITIATED)
+		{
+			#endif
+			_delay_us(1);////for safety but edit if made an error with the CAN Driver
+			//put the outgoing byte to be sent
+			(*(volatile msa_u8*)(strg_obj->driver_base_obj+DATA_REG_OFFSET))=*ByteOUT;
+			SET_BIT(DDRA,0);
+			//wait the exchange completion
+			volatile unsigned int protection=0;
+			while(!((*(volatile msa_u8*)(strg_obj->driver_base_obj+STATUS_REG_OFFSET)) & (1<<SPIF)))//fixed an error,was testing the 7th bit in the data reg wich is wrong
+			{	
+				PORTA |= 1<<1;_delay_us(10);PORTA&= ~(1<<1);_delay_us(10);protection++;
+				if (protection >= 2000 )
+				{
+					protection=0;
+					break;
+				}
+			}
+			CLEAR_BIT(DDRA,0);
+			//take the incoming byte that was received
+			*ByteIN=(*(volatile msa_u8*)(strg_obj->driver_base_obj+DATA_REG_OFFSET));
+
+			#if (DEBUGGING == 1)
+		}
+		else
+		{
+			ret_val=DRIVER_NOT_INITIATED;
+		}
+	}
+	else
+	{
+		ret_val=INVALID_SPI_PARAMS;
+	}
+	#endif
+	return ret_val;
+	
+}
+
+
 spi_error_t hal_spiExchangeDATA(str_spi_objectInfo_t * strg_obj,msa_u8 *ByteOUT,msa_u8 *ByteIN)
 {
 	spi_error_t ret_val=NO_SPI_ERROR;

@@ -6,64 +6,156 @@
  * Main test_1,without RTOS..note The value specifies the number of words the stack can hold, not the number of bytes.  
  */ 
 #include "INCLUDES.h"
+#include "system_funcs.h"
 
+#define PRESS_VAL	150
+
+#define AUTO_SYS	'z'
+#define MANU_SYS	'x'
+#define OFF_SYS		 0
+
+#define RESET_SYS	'c'
+
+#define MV_FORWARD	'v'
+#define MV_BACKWARD 'b'
+#define MV_LEFT		'n'
+#define MV_RIGHT	'm'
+
+#define FL_LIGHT	'p'
+#define FR_LIGHT	'u'
+#define BL_LIGHT	'o'
+#define BR_LIGHT	'y'
+
+#define BEEEEEEEEB	'i'
 
 //global variables
 volatile msa_u8			SHOWA [16];					// displaying digital output as it's sent as ascii
 volatile msa_u8			uart_data_got=0;			//used to listen to the tiva calls 
-volatile msa_u8			servo_direction[4]={2,4,6,8};	//
+volatile msa_u8			iteration_counter;
+volatile msa_u8			servo_direction[10]={2,3,4,5,6,7,6,5,4,3};	//re-edit=delete this useless array
 volatile st_pwm_object			pwm_obj;					//used as a container of the pwm configurations
 volatile str_spi_objectInfo_t	spi_obj;					//used to hold the spi configurations
 volatile usart_t				uart_obj;					//used to hold the uart configurations
+volatile msa_u8					sys_mode=OFF_SYS;
 
-volatile msa_u8 spi_temp_out=SCAN_YA_MEGA;
+volatile msa_u8 spi_temp_out=0;
 volatile msa_u8 spi_temp_inn=0;
 volatile msa_u8 uart_temp=0;
- 
+volatile msa_u8 *uart_welcome =			"=>Welcome to the system\n=>two modes possible:-\n=>AUTO(press Auto)\tManual(press Manual)\n<=";
+volatile msa_u8 *uart_wrong_command =	"sorry, this command isn't applicable";
+volatile msa_u8 *uart_manual_active =	"now the manual mode is active. you may control by the keypad on the screen";
+volatile msa_u8 *uart_automatic_active= "now the automatic mode is active. you may stop me with the RESET button";
+volatile msa_u8 *obstacle_array =		"Caution, there is an obstacle ahead!!";
 int main(void)
 {
 	system_init();
 	//sei();
 	while (1)
 	{
-		// 0:1:2 Servo direction
-		for (msa_u8 iteration_counter=0; iteration_counter < 3; iteration_counter++)
+		//send uart which mode??
+		usart_send_arr(&uart_obj,uart_welcome);
+		//possible>> auto-avoidance and remote-controlled
+		//read the uart with a while not interrupt
+		usart_receive_byte(&uart_obj,&uart_temp);
+		//auto>>
+		if (uart_temp == AUTO_SYS)
 		{
-			//check if uart_stop
-			uart_check();
-			//pwm
-			pwm_edit(&pwm_obj,INVERTED,FAST_PWM,SERVO_CTRL_FREQ,servo_direction[iteration_counter]);
-			//check if uart_stop
-			uart_check();
-			//spi_scan ya atmega
-			hal_spiExchangeDATA(&spi_obj,&spi_temp_out,&spi_temp_inn);
-			//check if uart_stop
-			uart_check();
-			//system test
-			//sys_test(iteration_counter,servo_direction[iteration_counter]); 
-			//wait el confirmation counter to be two 
-			_delay_ms(SERVO_DELAY_VAL);//use the rtos delay instead or wait the confirm cntr to be 2
-		}
-		//3:2:1 servo direction
-		for (msa_u8 iteration_counter=3; iteration_counter > 0; iteration_counter--)
+			usart_send_arr(&uart_obj,uart_automatic_active);
+			sys_mode=AUTO_SYS;
+			//while not quit
+			while (uart_temp != RESET_SYS )
+			{
+				// 0:1:2 Servo direction
+				for (iteration_counter=0; iteration_counter < 10; iteration_counter++)
+				{
+					//pwm
+					move_forward(350);
+					pwm_edit(&pwm_obj,INVERTED,FAST_PWM,SERVO_CTRL_FREQ,servo_direction[iteration_counter]);
+					//_delay_ms(SERVO_DELAY_VAL);
+				}
+				if (UDR == RESET_SYS)
+				{
+					break;
+				}
+			}
+		} 
+		else if(uart_temp == MANU_SYS)   //r-controlled>>
 		{
-			//check if uart_stop
-			uart_check();
-			//pwm
-			pwm_edit(&pwm_obj,INVERTED,FAST_PWM,SERVO_CTRL_FREQ,servo_direction[iteration_counter]);
-			//check if uart_stop
-			uart_check();
-			//spi_scan ya atmega
-			hal_spiExchangeDATA(&spi_obj,&spi_temp_out,&spi_temp_inn);
-			//check if uart_stop
-			uart_check();
-			//system test
-			//sys_test(iteration_counter,servo_direction[iteration_counter]);
-			//wait el confirmation counter to be two
-			_delay_ms(SERVO_DELAY_VAL);//use the rtos delay instead or wait the confirm cntr to be 2
+			usart_send_arr(&uart_obj,uart_manual_active);
+			sys_mode=MANU_SYS;
+			//while not quit
+			while (uart_temp != RESET_SYS )
+			{
+				usart_receive_byte(&uart_obj,&uart_temp);
+				//if 4ard/bkward/lift/right>>set the servo to the front/bkward/lift/right
+				if		(uart_temp == MV_FORWARD)
+				{
+					//scan the distance if there is an obstacle stop
+					//send >>an obstacle,please turn right or lift or move 4ard or bkward
+					//if not>>move for 200ms
+					//pwm
+					pwm_edit(&pwm_obj,INVERTED,FAST_PWM,SERVO_CTRL_FREQ,3);
+					move_forward(PRESS_VAL);
+				} 
+				else if (uart_temp == MV_BACKWARD)
+				{
+					//scan the distance if there is an obstacle stop
+					//send >>an obstacle,please turn right or lift or move 4ard or bkward
+					//if not>>move for 200ms
+					//pwm
+					pwm_edit(&pwm_obj,INVERTED,FAST_PWM,SERVO_CTRL_FREQ,3);
+					move_bckward(PRESS_VAL);
+				} 
+				else if (uart_temp == MV_RIGHT)
+				{
+					//scan the distance if there is an obstacle stop
+					//send >>an obstacle,please turn right or lift or move 4ard or bkward
+					//if not>>move for 200ms
+					//pwm
+					pwm_edit(&pwm_obj,INVERTED,FAST_PWM,SERVO_CTRL_FREQ,7);
+					move_right(PRESS_VAL);
+				} 
+				else if (uart_temp == MV_LEFT)
+				{
+					//scan the distance if there is an obstacle stop
+					//send >>an obstacle,please turn right or lift or move 4ard or bkward
+					//if not>>move for 200ms
+					//pwm
+					pwm_edit(&pwm_obj,INVERTED,FAST_PWM,SERVO_CTRL_FREQ,7);
+					move_left(PRESS_VAL);
+				}
+				else if (uart_temp == BEEEEEEEEB)
+				{
+					TOGGLE_BIT(PORTD,4);
+				}
+				else if (uart_temp == FL_LIGHT)
+				{
+					TOGGLE_BIT(PORTA,4);
+				}
+				else if (uart_temp == FR_LIGHT)
+				{
+					TOGGLE_BIT(PORTA,5);
+				}
+				else if (uart_temp == BL_LIGHT)
+				{
+					TOGGLE_BIT(PORTA,6);
+				}
+				else if (uart_temp == BR_LIGHT)
+				{
+					TOGGLE_BIT(PORTA,7);
+				}
+			}
+		sys_mode=OFF_SYS;
 		}
-		
-	}
+		else if(uart_temp == '\n')
+		{
+			//donothing this is just to neglict the end flag from the mobile app
+		}
+		else//neither manual nor auto
+		{
+			usart_send_arr(&uart_obj,uart_wrong_command);
+		}
+	}	//while_system
 	//if any error happened and missed the previous loop this will cover that error and try to catch 
 	//and i'll know by the change in the system behavior 
 	while(1)
@@ -72,77 +164,50 @@ int main(void)
 		//BUZ on
 		BUZ_ON();
 		//delay 250
-		_delay_ms(500);
+		_delay_ms(200);
 		//BUZ off
 		BUZ_OF();
 		//delay 250
-		_delay_ms(500);
+		_delay_ms(200);
 	}
 	return 0;
 }
 
-
-void system_init(void)
+ISR(INT0_vect)
 {
-	//LED PINS
-	SET_BIT(DDRA,LED_PIN);
-	SET_BIT(DDRA,BUZ_PIN);
-	//spi init...try polling i.e wait 10 m s or the time the longest scanning task will take plus some 
-	//time then ask for the status if reading is done or not
-				//try to make the delay decreases by time :D 
-	hal_spiInit(&spi_obj,SPI_1_base,FREQ_BY_4,MASTER_EN,SPI_POLLING,MODE_1,MSB_FIRST);
-	//uart init
-	usart_init(&uart_obj,A_RECEIVER,ONE_STP_BIT,NO_PARITY,EIGHT,INTERRUPT_DRIVEN,FALLING_EDGE);
-	usart_set_isr_RXC_callback(&uart_obj,usart_listen);
-	//pwm init
-	SET_BIT(DDRB,PWM_PIN);
-	SET_BIT(PORTB,PWM_PIN);
-	pwm_init(&pwm_obj,TIMER_0,INVERTED,FAST_PWM,SERVO_CTRL_FREQ,1);
-}
+	// 		movement_stop();
+	move_stop(10);
+	// 		read spi
+	usart_send_arr(&uart_obj,obstacle_array);
+	hal_spiExchangeDATA_A(&spi_obj,&spi_temp_out,&spi_temp_inn);
 
-void uart_check(void)	//will be a task with a semaphore depends on the isr
-{
-	if(uart_data_got == STOP_SERVO)
-	{
-		while (uart_data_got != RESUME_SERVO)	//will be changed by the isr
+		if (spi_temp_inn == OBSTACLE_A1)
 		{
-			//uart_data_got=UDR;
-			//red led on
-			RED_LED_ON();
-			//delay 250
-			_delay_ms(250);
-			//red led off
-			RED_LED_OF();
-			//delay 250
-			_delay_ms(250);
+			move_right(350);
+		} 
+		else
+		{
+			move_left(350);
 		}
-	
-	}
-	//red led off
-	RED_LED_OF();
-}
-//used to watch the status of the mcu and no longer is needed
-//>>re-set the mcu as a sender to be capable of ending 
-//but this will give an extreme error and halt the cpu
-void sys_test(msa_u8 counter,msa_u8 direction)
-{
-	msa_u8 *arr_add1=(msa_u8 *)"i = ";
-	msa_u8 *arr_add2=(msa_u8 *)"  gives an angle of ";
-	msa_u8 data_byte='\n';
-	//testing
-	usart_send_arr(&uart_obj,arr_add1);
-	itoa(counter,SHOWA,10);
-	usart_send_arr(&uart_obj,SHOWA);
-	usart_send_arr(&uart_obj,arr_add2);
-	itoa(direction,SHOWA,10);
-	usart_send_arr(&uart_obj,SHOWA);
-	usart_send_byte(&uart_obj,&data_byte);
-	//testing_end
-}
+		spi_temp_inn=0;
 
-//this will occur only if there is an emergency call from the tiva controller
-void usart_listen(void)
+}
+ISR(INT1_vect)
 {
-	uart_data_got=UDR;
-	//mutexGiveFromISR
+	// 		movement_stop();
+	move_stop(10);
+	// 		read spi
+	usart_send_arr(&uart_obj,obstacle_array);
+	hal_spiExchangeDATA_A(&spi_obj,&spi_temp_out,&spi_temp_inn);
+
+	if (spi_temp_inn == OBSTACLE_A1)
+	{
+		move_left(350);
+	}
+	else
+	{
+		move_right(350);
+	}
+	spi_temp_inn=0;
+		
 }

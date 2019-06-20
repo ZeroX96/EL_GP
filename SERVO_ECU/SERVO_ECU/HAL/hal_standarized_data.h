@@ -13,11 +13,13 @@
 //UART//UART//UART//UART//UART//UART
 //UART//UART//UART//UART//UART//UART
 
-//AT_SCAN-->>TI_MAIN
+// AT_SCAN <<-:->> AT_MAIN
+#define OBSTACLE_A1		'R'
 #define OBSTACLE_A1_0	'A'	//	- ;
 #define OBSTACLE_A1_1	'B'	//	/ ;
 #define OBSTACLE_A1_2	'C'	//	| ;
 
+#define OBSTACLE_A2		'S'
 #define OBSTACLE_A2_0	'D'	//	| ;
 #define OBSTACLE_A2_1	'E'	//	\ ;
 #define OBSTACLE_A2_2	'F'	//	- ;
@@ -32,9 +34,6 @@
 
 #define NO_OBSTACLES	'M'	//  O ;
 
-//TI_MAN-->>AT_SERVO
-#define STOP_SERVO		'N'
-#define RESUME_SERVO	'O'
 
 
 //SPI//SPI//SPI//SPI//SPI//SPI//SPI

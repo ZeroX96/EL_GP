@@ -13,7 +13,7 @@
 #define F_CPU 8000000UL
 #endif
 
-#define DEBUGGING 0
+//#define DEBUGGING 0
 
 
 
